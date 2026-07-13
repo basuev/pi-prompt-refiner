@@ -1,3 +1,12 @@
+/**
+ * Context-aware prompt refinement for Pi.
+ *
+ * Prompt-quality rules are based on OpenAI's "Prompting Codex" guide:
+ * https://learn.chatgpt.com/docs/prompting#prompting-codex
+ *
+ * Session summarization, compaction handling, transcript limits, and the
+ * GPT-5.6 Luna execution path are project-specific implementation choices.
+ */
 import { readFileSync } from "node:fs";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import {

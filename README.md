@@ -89,9 +89,15 @@ Check every configured Luna thinking level against your current Codex subscripti
 /refine-prompt-efforts
 ```
 
+## Design source
+
+The prompt-refinement rules are based on OpenAI's [Prompting Codex](https://learn.chatgpt.com/docs/prompting#prompting-codex) guide, reviewed on July 13, 2026.
+
+The guide informed the rules for stating the desired outcome, retaining relevant code and reproduction context, preserving constraints, defining deliverables, and verifying the result. It did not define the Pi package structure, session summarization, compaction handling, transcript limit, Luna execution path, or thinking-level fallback. Those are implementation choices in this project.
+
 ## Prompt rules
 
-The refiner preserves the user's intent, facts, constraints, language, and requested autonomy. It applies Codex prompting practices selectively:
+The refiner preserves the user's intent, facts, constraints, language, and requested autonomy. It applies the sourced Codex prompting practices when they improve the request:
 
 - lead with the desired behavior or outcome;
 - retain relevant files, symbols, logs, screenshots, and reproduction steps;
