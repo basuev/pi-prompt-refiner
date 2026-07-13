@@ -1,0 +1,35 @@
+{
+  "name": "pi-prompt-refiner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Context-aware prompt refinement for Pi using GPT-5.6 Luna through a Codex subscription.",
+  "keywords": [
+    "pi-package",
+    "pi",
+    "codex",
+    "prompt-refinement"
+  ],
+  "license": "MIT",
+  "author": "Timofey Basuev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/basuev/pi-prompt-refiner.git"
+  },
+  "homepage": "https://github.com/basuev/pi-prompt-refiner#readme",
+  "bugs": {
+    "url": "https://github.com/basuev/pi-prompt-refiner/issues"
+  },
+  "pi": {
+    "extensions": [
+      "./extensions"
+    ],
+    "skills": [
+      "./skills"
+    ]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-agent-core": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  }
+}
