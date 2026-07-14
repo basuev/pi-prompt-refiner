@@ -34,11 +34,19 @@ Pi packages execute with your user permissions. Review the extension and skill b
 
 ## Use
 
-Run the command with an inline prompt:
+Run the command with an inline prompt. It defaults to continuation mode:
 
 ```text
 /refine-prompt fix the login bug we discussed
 ```
+
+Create a portable prompt for a new conversation:
+
+```text
+/refine-prompt --standalone fix the login bug we discussed
+```
+
+Use `--continuation` to select the default mode explicitly.
 
 Run the command without arguments to open an editor:
 
@@ -54,16 +62,22 @@ Invoke the skill explicitly:
 
 The skill can also load when you ask Pi to refine, improve, rewrite, or optimize a prompt.
 
-The command places the refined prompt in the Pi editor. The skill returns it in a Markdown code block.
+The command places the refined prompt in the Pi editor. The skill returns it in a Markdown code block. The skill chooses continuation mode unless you ask for a standalone prompt for a new conversation.
+
+## Delivery modes
+
+`continuation` targets the current conversation. Luna uses the session summary to interpret references and prior decisions, then writes the smallest useful follow-up. It keeps known research and constraints implicit instead of restating them.
+
+`standalone` targets a new conversation. Luna carries the contextual facts and requirements needed to make the result actionable without the original history.
 
 ## Session context
 
-When the active branch contains earlier messages, the extension runs two Luna calls:
+When the active branch contains earlier messages, both modes run two Luna calls:
 
 1. Luna at `medium` condenses relevant session context into a brief of at most 300 words.
 2. Luna at `high` refines the supplied prompt with that brief as background knowledge.
 
-The context brief helps Luna resolve references such as "make the change we discussed." Luna does not copy session details into a prompt that already stands on its own.
+The context brief helps Luna resolve references such as "make the change we discussed." Delivery mode controls whether those details remain implicit or become part of the result.
 
 Context preparation:
 
@@ -114,6 +128,7 @@ The current package keeps model and context settings in [`extensions/refine-prom
 
 - model: `openai-codex/gpt-5.6-luna`;
 - summary level: `medium`;
+- default delivery mode: `continuation`;
 - initial refinement level: `high`;
 - summary limit: 300 words;
 - transcript limit: 60,000 characters;
@@ -149,7 +164,7 @@ For a context check, establish a constraint in one turn and refine a context-dep
 /skill:refine-prompt make the change we discussed
 ```
 
-Confirm that the result carries required constraints from the conversation. Then refine a standalone request and confirm that unrelated session details do not appear.
+Confirm that continuation mode resolves the reference without restating the conversation. Repeat with `mode: standalone` or `/refine-prompt --standalone` and confirm that the result carries the facts required outside the original session. Then refine an unrelated standalone request and confirm that unrelated session details do not appear.
 
 ## Package layout
 
