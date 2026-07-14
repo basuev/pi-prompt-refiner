@@ -34,7 +34,7 @@ Pi packages execute with your user permissions. Review the extension and skill b
 
 ## Use
 
-Run the command with an inline prompt. It defaults to continuation mode:
+Run the command with an inline prompt. It defaults to automatic mode selection:
 
 ```text
 /refine-prompt fix the login bug we discussed
@@ -46,7 +46,7 @@ Create a portable prompt for a new conversation:
 /refine-prompt --standalone fix the login bug we discussed
 ```
 
-Use `--continuation` to select the default mode explicitly.
+Use `--continuation` or `--standalone` to override automatic selection. Use `--auto` to select the default explicitly.
 
 Run the command without arguments to open an editor:
 
@@ -62,20 +62,24 @@ Invoke the skill explicitly:
 
 The skill can also load when you ask Pi to refine, improve, rewrite, or optimize a prompt.
 
-The command places the refined prompt in the Pi editor. The skill returns it in a Markdown code block. The skill chooses continuation mode unless you ask for a standalone prompt for a new conversation.
+The command places the refined prompt in the Pi editor. The skill returns it in a Markdown code block. Both use automatic mode selection unless you request a mode explicitly.
 
 ## Delivery modes
 
-`continuation` targets the current conversation. Luna uses the session summary to interpret references and prior decisions, then writes the smallest useful follow-up. It keeps known research and constraints implicit instead of restating them.
+`auto` selects `standalone` only when the request explicitly asks for a portable prompt for a new conversation, another agent, sharing, or later reuse. It selects `continuation` for every other request, including detailed and self-contained prompts, because the result normally returns to the current Pi session. An auto-selected standalone prompt does not import session context.
+
+`continuation` targets the current conversation. Luna preserves every explicit fact and requirement in the prompt being refined. It uses the session summary to interpret references and prior decisions while keeping facts found only in earlier conversation implicit.
 
 `standalone` targets a new conversation. Luna carries the contextual facts and requirements needed to make the result actionable without the original history.
 
 ## Session context
 
-When the active branch contains earlier messages, both modes run two Luna calls:
+Automatic selection first uses Luna at `minimal` to choose a delivery mode. Auto-selected continuation and explicit modes can then use two more Luna calls when the active branch contains earlier messages:
 
 1. Luna at `medium` condenses relevant session context into a brief of at most 300 words.
 2. Luna at `high` refines the supplied prompt with that brief as background knowledge.
+
+An explicit mode skips the classification call. Explicit standalone mode can still use relevant session context to produce a portable prompt; auto-selected standalone mode skips session summarization.
 
 The context brief helps Luna resolve references such as "make the change we discussed." Delivery mode controls whether those details remain implicit or become part of the result.
 
@@ -128,7 +132,8 @@ The current package keeps model and context settings in [`extensions/refine-prom
 
 - model: `openai-codex/gpt-5.6-luna`;
 - summary level: `medium`;
-- default delivery mode: `continuation`;
+- default requested mode: `auto`;
+- automatic mode-classification level: `minimal`;
 - initial refinement level: `high`;
 - summary limit: 300 words;
 - transcript limit: 60,000 characters;
@@ -164,7 +169,7 @@ For a context check, establish a constraint in one turn and refine a context-dep
 /skill:refine-prompt make the change we discussed
 ```
 
-Confirm that continuation mode resolves the reference without restating the conversation. Repeat with `mode: standalone` or `/refine-prompt --standalone` and confirm that the result carries the facts required outside the original session. Then refine an unrelated standalone request and confirm that unrelated session details do not appear.
+Confirm that auto mode selects continuation and resolves the reference without restating the conversation. Refine a detailed self-contained request and confirm that continuation preserves every explicit detail. Then request a portable prompt for a new conversation and confirm that auto mode selects standalone without importing unrelated session details.
 
 ## Package layout
 
